@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   String url = 'http://api.openweathermap.org/data/2.5/weather?'; // API 링크
   String lat = '';                                                // 위도
   String lon = '';                                                // 경도
-  String appid = 'appid=9375cf7ab1b655eb49960db7d5ebc132&';       // API 키
+  String appid = 'appid=&';       // API 키
   String units = 'units=metric';                                  // 데이터 반환 형태 변수
 
   var background = Color(0xFFFCCB7F);   // 배경색상을 저장할 변수 요즘 날씨가 더워서 기본 색상으로 더운 색상으로 지정
