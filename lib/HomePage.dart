@@ -148,6 +148,53 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
 
+      /*
+      새로고침시 동작할 함수 _onRefresh 등록
+      화면을 아래로 스크롤 시 새로고침
+       */
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Container(
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.menu),
+                      onPressed: () {
+                        /*
+                    ScaffoldState가 null일 수 있기 때문에 조건부 호출을 위해 ?를 붙여 null체크
+                     */
+                        _scaffoldKey.currentState?.openDrawer();
+                      },),
+                    Spacer(),
+                    Text('Weather Apps'),
+                    Spacer(),
+
+                    gps == true
+                        ? IconButton(icon: Icon(Icons.gps_fixed), onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('위치 정보를 정상적으로 받아오고 있습니다.'))
+                      );
+                    },
+                    )
+                        : IconButton(icon: Icon(Icons.gps_not_fixed), onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('위치 정보가 정상적이지 않습니다.'))
+                      );
+                    },
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           getData();
