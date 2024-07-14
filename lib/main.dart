@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:final_project_flutter/HomePage.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
-void main() => runApp(MyApp());
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Future.delayed((const Duration(seconds: 5)));
+  FlutterNativeSplash.remove();
+
+  runApp(
+    MyApp(),
+  );
+}
+
 
 class MyApp extends StatelessWidget {
   @override
