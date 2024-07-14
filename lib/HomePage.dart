@@ -62,6 +62,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   /*
+  메인 페이지 구성을 위한 함수 생성
+  _onRefresh 함수 호출 시 setState 동작
+   */
+  Future<Null> _onRefresh()async {
+    setState(() {
+
+    });
+  }
+
+  /*
   앱을 실행할때 불러오는 함수
   실행할 떄마다 permission함수를 불러와 위치권한 확인
    */
@@ -75,6 +85,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      // 메인 페이지 옆에 사이드 탭
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -116,10 +127,19 @@ class _HomePageState extends State<HomePage> {
                     height: 50,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      image: DecorationImage(
-
-                      )
                     ),
+                  ),
+                  Divider(color: Colors.black,),
+                  ListTile(
+                    leading: Icon(Icons.home),
+                    title: Text('Home'),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.settings),
+                    title: Text('Setting'),
                   )
                 ],
               ),
