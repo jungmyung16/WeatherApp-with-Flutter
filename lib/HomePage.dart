@@ -27,6 +27,8 @@ class _HomePageState extends State<HomePage> {
   String appid = 'appid=9375cf7ab1b655eb49960db7d5ebc132&';       // API 키
   String units = 'units=metric';                                  // 데이터 반환 형태 변수
 
+  var background = Color(0xFFFCCB7F);   // 배경색상을 저장할 변수 요즘 날씨가 더워서 기본 색상으로 더운 색상으로 지정
+
   void permission() async {
     await Geolocator.requestPermission();
     LocationPermission value = await Geolocator.checkPermission();
@@ -58,6 +60,18 @@ class _HomePageState extends State<HomePage> {
     );
     print('Response body: ${response.body}');
     weatherData = jsonDecode(response.body);
+
+    /*
+    구성된 getData 함수에 배경 색을 변경하는 코드 추가
+    21도 이하면 서늘한 색상 or 22도 이상이면 따스한 색상
+     */
+    if(weatherData['main']['temp'] < 21) {
+      background = Color(0xFF53ABCC);
+      print('So Cold!!');
+    } else {
+      background = Color(0xFFFCCB7F);
+      print('So Hottt!!');
+    }
     return weatherData;
   }
 
