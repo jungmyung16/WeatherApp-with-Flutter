@@ -11,6 +11,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  /*
+  드로워 사용을 위한 글로벌 키 생성
+  값이 변하지 않기 때문에 final로 선언
+   */
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   bool? gps;
 
   var weatherData;  // API 데이터 변수 선언
@@ -68,6 +74,60 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.only(left: 10),
+              // MediaQuery는 디바이스의 크기 값을 불러옴
+              margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top), // 핸드폰 상태바와 겹치지 않도록 마진 값 추가
+              child: Row(
+                children: [
+                  Text(
+                    'Weather App',
+                    style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.camera, color: Colors.black,),
+                    onPressed: () {
+                      print("아무 기능도 없지만 허전해서 그냥 만들어본 버튼");
+                    },
+                  ),
+                  Spacer(), // 화면 반대편에
+                  IconButton(
+                    icon: Icon(Icons.share, color: Colors.black,),
+                    onPressed: () {
+                      print("아무 기능도 없지만 그럴싸하게 만들어본 버튼");
+                    },
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+
+                      )
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           getData();
