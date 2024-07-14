@@ -202,6 +202,35 @@ class _HomePageState extends State<HomePage> {
                     },
                     )
                   ],
+                ),
+                
+                /*
+                FutureBuilder구성 : 새로운 데이터 반환시 새로고침
+                미래에 데이터가 올 것이라 예상하고 그 전까지 다른 데이터를 넣어 놓는다.
+                 */
+                FutureBuilder(
+                  future: getData(), 
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if(!snapshot.hasData) return CircularProgressIndicator();   // 데이터가 들어와 있지 않다면
+                    return Container( // 데이터가 들어왔다면
+                      color: background,
+                      child: Column(
+                        children: [
+                          SizedBox(height: 40,),
+                          Text('${snapshot.data['weather'][0]['main']}',  // 날씨 정보
+                            style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.location_on, color: Colors.white, size: 16,),
+                              Text('${snapshot.data['name']}',  // 도시 정보
+                                style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),),
+                            ],
+                          )
+                        ],
+                      )
+                    );
+                  }
                 )
               ],
             ),
