@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -28,6 +29,11 @@ class _HomePageState extends State<HomePage> {
   String units = 'units=metric';                                  // 데이터 반환 형태 변수
 
   var background = Color(0xFFFCCB7F);   // 배경색상을 저장할 변수 요즘 날씨가 더워서 기본 색상으로 더운 색상으로 지정
+  var textground = Color(0xFFFCCB7F);   // 상세 정보 컬러
+  String image = "images/hotImg.png";
+
+  DateFormat format = DateFormat('H시 m분 s초');
+  DateFormat sun = DateFormat('H시 m분');
 
   void permission() async {
     await Geolocator.requestPermission();
@@ -67,9 +73,13 @@ class _HomePageState extends State<HomePage> {
      */
     if(weatherData['main']['temp'] < 21) {
       background = Color(0xFF53ABCC);
+      textground = Color(0xFF53ABCC);
+      image = "images/coldImg.png";
       print('So Cold!!');
     } else {
       background = Color(0xFFFCCB7F);
+      textground = Color(0xFFFCCB7F);
+      image = "images/hotImg.png";
       print('So Hottt!!');
     }
     return weatherData;
@@ -185,7 +195,10 @@ class _HomePageState extends State<HomePage> {
                         _scaffoldKey.currentState?.openDrawer();
                       },),
                     Spacer(),
-                    Text('Weather Apps'),
+                    Text(
+                      'Weather News',
+                      style: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.bold)
+                    ),
                     Spacer(),
 
                     gps == true
@@ -226,9 +239,129 @@ class _HomePageState extends State<HomePage> {
                               Text('${snapshot.data['name']}',  // 도시 정보
                                 style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),),
                             ],
+                          ),
+                          // 온도 구역
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('${snapshot.data['main']['temp'].toStringAsFixed(0)}', // 소수점 표시 안함
+                                style: TextStyle(fontSize: 65, color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                              // Column 형태로 온도 바로 옆에 최고, 최저 온도 작성
+                              Column(
+                                children: [
+                                  Text('°C',
+                                    style: TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.bold),
+                                  ),
+                                  Row(children: [
+                                    Icon(Icons.keyboard_arrow_up, color: Colors.white, size: 15,),
+                                      Text('${snapshot.data['main']['temp_max'].toStringAsFixed(0)}°C',
+                                      style: TextStyle(fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold),
+                                    ),
+                                  ],),
+
+                                  Row(children: [
+                                    Icon(Icons.keyboard_arrow_up, color: Colors.white, size: 15,),
+                                      Text('${snapshot.data['main']['temp_min'].toStringAsFixed(0)}°C',
+                                        style: TextStyle(fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          // API사이트에서 제공하는 아이콘 사용
+                          Image.network('http://openweathermap.org/img/wn/' + snapshot.data['weather'][0]['icon'] + '@2x.png'),
+                          Image.asset(image, width: MediaQuery.of(context).size.width,), // 화면에 꽉차게
+
+                          // 마지막 업데이트 시간 표시
+                          Container(
+                            padding: EdgeInsets.only(right: 10, top: 10),
+                            alignment: Alignment.centerRight,
+                            child: Text('마지막 업데이트 시간: ${format.format(DateTime.now())}')
+                          ),
+                          // 세부 정보 레이아웃
+                          Container(
+                            width: MediaQuery.of(context).size.width-10,
+                            child: Card(
+                              color: textground,
+                              child: Container(
+                                padding: EdgeInsets.all(10),
+                                margin: EdgeInsets.all(10),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('More Information!!', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+                                    SizedBox(height: 10,),
+                                    IntrinsicHeight(
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Icon(Icons.water_damage, color: Colors.black54,),
+                                          Column(
+                                            children: [
+                                              Text('습도'),
+                                              Text('${snapshot.data['main']['humidity'].toStringAsFixed(0)}%')
+                                            ],
+                                          ),
+                                          VerticalDivider(color: Colors.black54,),
+
+                                          Icon(Icons.remove_red_eye, color: Colors.black54,),
+                                          Column(
+                                            children: [
+                                              Text('가시성'),
+                                              Text('${snapshot.data['visibility']}')
+                                            ],
+                                          ),
+                                          VerticalDivider(color: Colors.black54,),
+
+                                          Icon(Icons.map_sharp, color: Colors.black54,),
+                                          Column(
+                                            children: [
+                                              Text('국가'),
+                                              Text('${snapshot.data['sys']['country']}')
+                                            ],
+                                          ),
+                                          VerticalDivider(color: Colors.black54,)
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 20,),
+                                    IntrinsicHeight(
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          infoSpace(Icons.wind_power_sharp, '풍속', '${snapshot.data['wind']['speed']}'),
+                                          VerticalDivider(color: Colors.black54,),
+                                          infoSpace(Icons.speed, '풍향', '${snapshot.data['wind']['deg']}')
+                                        ],
+                                      ),
+                                    ),
+                                    /*
+                                     *  API사이트에서 날짜 형태가 아닌 타임스탬프 형태로 데이터를 넘겨줘서 1000을 곱한다
+                                     */
+                                    SizedBox(height: 20,),
+                                    IntrinsicHeight(
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          infoSpace(Icons.wb_sunny, '일출',
+                                        sun.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data['sys']['sunrise'] * 1000))),
+                                          VerticalDivider(color: Colors.black54,),
+                                          infoSpace(Icons.nights_stay, '일몰',
+                                        sun.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data['sys']['sunset'] * 1000))),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
                           )
                         ],
-                      )
+                      ),
                     );
                   }
                 )
@@ -237,11 +370,28 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          getData();
-        },
+    );
+  }
+  /*
+  마지막 세부 정보 위젯 레이아웃
+   */
+  Widget infoSpace(IconData icons, String topText, String bottomText) {
+    return Container(
+      width: MediaQuery.of(context).size.width/2-50,  // 화면 절반만큼  2칸으로 나눠주고 padding값과 margin값만큼 널널하게 50을 뺀다
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Icon(icons, color: Colors.black54,),
+          Container(
+            width: MediaQuery.of(context).size.width/5,
+            child: Column(
+              children: [
+                Text(topText),
+                Text(bottomText)
+              ],
+            )
+          )
+        ],
       ),
     );
   }
